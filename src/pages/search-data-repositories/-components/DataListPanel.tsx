@@ -48,7 +48,7 @@ export const DataListPanel: React.FC<DataListPanelProps> = ({
   const { isPending, isError, data, error } = useListQuery({
     activeFilters,
     // CUSTOMIZE: the main data source
-    dataSource: 'dummy-data/datasets.json',
+    dataSource: 'data/Metrics Summary.csv',
     filterConfigs,
     offset,
     page,
@@ -56,7 +56,13 @@ export const DataListPanel: React.FC<DataListPanelProps> = ({
     queryMode,
     staticParams: null,
   });
-  const cards = filterData(data, activeFilters, filterConfigs, searchTerm);
+  // Add unique IDs to CSV data if they don't exist
+  const dataWithIds = data?.map((item: any, index: number) => ({
+    ...item,
+    id: item.id || `row-${index}`,
+  })) || [];
+  
+  const cards = filterData(dataWithIds, activeFilters, filterConfigs, searchTerm);
   const emptyRows = new Array(pageSize).fill(null);
   const indexedRows = emptyRows.map((row, i) => i);
 

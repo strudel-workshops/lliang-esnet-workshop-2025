@@ -54,64 +54,36 @@ export const DataListCard: React.FC<DataListCardProps> = ({
       </Box>
       <Box flex={1}>
         <Typography sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-          <AppLink
-            to="/search-data-repositories/$id"
-            params={{ id: item.id }}
-            underline="hover"
-          >
-            {/* CUSTOMIZE: item title field */}
-            {item.title}
-          </AppLink>
+          {/* CUSTOMIZE: Display Metric field from CSV */}
+          {item['Metric '] || item.Metric || 'N/A'}
         </Typography>
-        {item.summary && (
+        {item.Details && (
           <Typography
             sx={{
               WebkitBoxOrient: 'vertical',
               WebkitLineClamp: '2',
               display: '-webkit-box',
               overflow: 'hidden',
+              marginTop: 0.5,
             }}
           >
-            {/* CUSTOMIZE: item summary field */}
-            {item.summary}
+            {/* CUSTOMIZE: Display Details field from CSV */}
+            {item.Details}
           </Typography>
         )}
-        {item.tags && (
-          <Typography
-            sx={{
-              WebkitBoxOrient: 'vertical',
-              WebkitLineClamp: '1',
-              display: '-webkit-box',
-              fontStyle: 'italic',
-              overflow: 'hidden',
-            }}
-          >
-            {/* CUSTOMIZE: item tags field */}
-            {item.tags.map((tag: string, i: number) => {
-              if (i < item.tags.length - 1) {
-                return (
-                  <Typography
-                    key={`${tag}-${i}`}
-                    component="span"
-                    sx={{ fontSize: 'small', marginRight: 0.5 }}
-                  >
-                    {tag},
-                  </Typography>
-                );
-              } else {
-                return (
-                  <Typography
-                    key={`${tag}-${i}`}
-                    component="span"
-                    sx={{ fontSize: 'small' }}
-                  >
-                    {tag}
-                  </Typography>
-                );
-              }
-            })}
-          </Typography>
-        )}
+        <Typography
+          sx={{
+            fontSize: 'small',
+            marginTop: 1,
+            color: 'text.secondary',
+          }}
+        >
+          {/* Display yearly data from CSV */}
+          {item['2023'] && <span style={{ marginRight: '12px' }}>2023: {item['2023']}</span>}
+          {item['2024'] && <span style={{ marginRight: '12px' }}>2024: {item['2024']}</span>}
+          {item['2025'] && <span style={{ marginRight: '12px' }}>2025: {item['2025']}</span>}
+          {item['2026'] && <span>2026: {item['2026']}</span>}
+        </Typography>
       </Box>
     </Stack>
   );
