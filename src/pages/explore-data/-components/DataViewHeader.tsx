@@ -31,6 +31,12 @@ export const DataViewHeader: React.FC<DataViewHeaderProps> = ({
   onToggleFiltersPanel,
   onAddRow,
   onAddColumn,
+  onExport,
+  onUndo,
+  onRedo,
+  onToggleColumnVisibility,
+  canUndo,
+  canRedo,
 }) => {
   const handleSearch: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
     setSearchTerm(evt.target.value);

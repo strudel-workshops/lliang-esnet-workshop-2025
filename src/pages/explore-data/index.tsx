@@ -7,6 +7,8 @@ import { DataView } from './-components/DataView';
 import { FiltersPanel } from './-components/FiltersPanel';
 import { CommentsPanel } from './-components/CommentsPanel';
 import { FilesPanel } from './-components/FilesPanel';
+import { StudentDetailsPanel } from './-components/StudentDetailsPanel';
+import { HiringProcessPanel } from './-components/HiringProcessPanel';
 import { FilterConfig } from '../../types/filters.types';
 
 export const Route = createFileRoute('/explore-data/')({
@@ -26,6 +28,9 @@ function DataExplorer() {
   const [showFiltersPanel, setShowFiltersPanel] = useState(true);
   const [commentsRowId, setCommentsRowId] = useState<string | null>(null);
   const [filesRowId, setFilesRowId] = useState<string | null>(null);
+  const [studentDetailsRowId, setStudentDetailsRowId] = useState<string | null>(null);
+  const [studentDetailsName, setStudentDetailsName] = useState<string>('');
+  const [hiringProcessRowId, setHiringProcessRowId] = useState<string | null>(null);
 
   const handleCloseFilters = () => {
     setShowFiltersPanel(false);
@@ -49,6 +54,39 @@ function DataExplorer() {
 
   const handleCloseFiles = () => {
     setFilesRowId(null);
+  };
+
+  const handleOpenStudentDetails = (rowId: string) => {
+    // Try to get the student name from localStorage edits first
+    const savedEdits = localStorage.getItem('metrics_edits');
+    let studentName = '';
+    
+    if (savedEdits) {
+      try {
+        const edits = JSON.parse(savedEdits);
+        if (edits[rowId] && edits[rowId]['Student Name']) {
+          studentName = edits[rowId]['Student Name'];
+        }
+      } catch (e) {
+        console.error('Error parsing saved edits:', e);
+      }
+    }
+    
+    setStudentDetailsRowId(rowId);
+    setStudentDetailsName(studentName);
+  };
+
+  const handleCloseStudentDetails = () => {
+    setStudentDetailsRowId(null);
+    setStudentDetailsName('');
+  };
+
+  const handleOpenHiringProcess = (rowId: string) => {
+    setHiringProcessRowId(rowId);
+  };
+
+  const handleCloseHiringProcess = () => {
+    setHiringProcessRowId(null);
   };
 
   return (
@@ -93,6 +131,8 @@ function DataExplorer() {
                 onToggleFiltersPanel={handleToggleFilters}
                 onOpenComments={handleOpenComments}
                 onOpenFiles={handleOpenFiles}
+                onOpenStudentDetails={handleOpenStudentDetails}
+                onOpenHiringProcess={handleOpenHiringProcess}
               />
             </Paper>
             {commentsRowId && (
@@ -116,6 +156,31 @@ function DataExplorer() {
                 <FilesPanel
                   rowId={filesRowId}
                   onClose={handleCloseFiles}
+                />
+              </Box>
+            )}
+            {studentDetailsRowId && (
+              <Box
+                sx={{
+                  minWidth: '400px',
+                }}
+              >
+                <StudentDetailsPanel
+                  rowId={studentDetailsRowId}
+                  studentName={studentDetailsName}
+                  onClose={handleCloseStudentDetails}
+                />
+              </Box>
+            )}
+            {hiringProcessRowId && (
+              <Box
+                sx={{
+                  minWidth: '400px',
+                }}
+              >
+                <HiringProcessPanel
+                  rowId={hiringProcessRowId}
+                  onClose={handleCloseHiringProcess}
                 />
               </Box>
             )}

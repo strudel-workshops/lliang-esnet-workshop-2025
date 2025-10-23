@@ -8,7 +8,10 @@ import { useListQuery } from '../../../hooks/useListQuery';
 import { FilterConfig } from '../../../types/filters.types';
 import { CommentsCell } from './CommentsCell';
 import { FilesCell } from './FilesCell';
+import { StudentNameCell } from './StudentNameCell';
+import { HiringProcessCell } from './HiringProcessCell';
 import { DataViewHeader } from './DataViewHeader';
+import * as XLSX from 'xlsx';
 
 interface DataViewProps {
   filterConfigs: FilterConfig[];
@@ -17,6 +20,8 @@ interface DataViewProps {
   onToggleFiltersPanel: () => void;
   onOpenComments: (rowId: string) => void;
   onOpenFiles: (rowId: string) => void;
+  onOpenStudentDetails: (rowId: string) => void;
+  onOpenHiringProcess: (rowId: string) => void;
 }
 /**
  * Query the data rows and render as an interactive table
@@ -28,6 +33,8 @@ export const DataView: React.FC<DataViewProps> = ({
   onToggleFiltersPanel,
   onOpenComments,
   onOpenFiles,
+  onOpenStudentDetails,
+  onOpenHiringProcess,
 }) => {
   const { activeFilters } = useFilters();
   const [page, setPage] = useState(0);
@@ -90,6 +97,7 @@ export const DataView: React.FC<DataViewProps> = ({
       '2024': '',
       '2025': '',
       '2026': '',
+      'Student Name': '',
       'Onboarding': '',
       'Location': '',
       'Attend Poster session': '',
@@ -228,6 +236,34 @@ export const DataView: React.FC<DataViewProps> = ({
     setOffest(newOffset);
   };
 
+  // Handler to export data to CSV
+  const handleExport = () => {
+    // Get the filtered data
+    const filteredData = filterData(csvData, activeFilters, filterConfigs, searchTerm);
+    
+    // Prepare data for export (exclude internal fields like 'id', 'files', 'comments')
+    const exportData = filteredData.map((row: any) => {
+      const { id, files, comments, ...rest } = row;
+      return rest;
+    });
+    
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+    
+    // Convert data to worksheet
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Metrics Summary');
+    
+    // Generate filename with current date
+    const date = new Date().toISOString().split('T')[0];
+    const filename = `Metrics_Summary_${date}.csv`;
+    
+    // Write the file as CSV
+    XLSX.writeFile(wb, filename, { bookType: 'csv' });
+  };
+
   // Show a loading skeleton while the initial query is pending
   if (isPending) {
     const emptyRows = new Array(pageSize).fill(null);
@@ -259,6 +295,7 @@ export const DataView: React.FC<DataViewProps> = ({
         onToggleFiltersPanel={onToggleFiltersPanel}
         onAddRow={handleAddRow}
         onAddColumn={handleAddColumn}
+        onExport={handleExport}
       />
       {isFetching && <LinearProgress variant="indeterminate" />}
       <SciDataGrid
@@ -308,6 +345,19 @@ export const DataView: React.FC<DataViewProps> = ({
             editable: true,
           },
           {
+            field: 'Student Name',
+            headerName: 'Student Name',
+            width: 200,
+            editable: true,
+            renderCell: (params) => (
+              <StudentNameCell
+                rowId={params.row.id}
+                studentName={params.value || ''}
+                onOpenStudentDetails={onOpenStudentDetails}
+              />
+            ),
+          },
+          {
             field: 'Onboarding',
             headerName: 'Onboarding',
             width: 250,
@@ -354,6 +404,20 @@ export const DataView: React.FC<DataViewProps> = ({
             width: 120,
             editable: true,
           })),
+          {
+            field: 'hiring_process',
+            headerName: 'Hiring Process',
+            width: 150,
+            sortable: false,
+            filterable: false,
+            editable: false,
+            renderCell: (params) => (
+              <HiringProcessCell 
+                rowId={params.row.id} 
+                onOpenHiringProcess={onOpenHiringProcess}
+              />
+            ),
+          },
           {
             field: 'files',
             headerName: 'Files',
