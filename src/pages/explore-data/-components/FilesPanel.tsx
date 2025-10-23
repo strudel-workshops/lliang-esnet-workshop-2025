@@ -7,7 +7,6 @@ import {
   ListItem,
   ListItemText,
   Paper,
-  Stack,
   Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';

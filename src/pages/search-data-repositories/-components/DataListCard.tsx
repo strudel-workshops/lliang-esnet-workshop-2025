@@ -1,7 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import React from 'react';
-import { AppLink } from '../../../components/AppLink';
 
 interface DataListCardProps {
   item: any;

@@ -45,7 +45,6 @@ export const DataView: React.FC<DataViewProps> = ({
   const [customColumns, setCustomColumns] = useState<string[]>([]);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [selectedColumnField, setSelectedColumnField] = useState<string | null>(null);
-  const [columnOrder, setColumnOrder] = useState<string[]>([]);
   
   // CUSTOMIZE: the unique ID field for the data source
   const dataIdField = 'id';
@@ -78,11 +77,6 @@ export const DataView: React.FC<DataViewProps> = ({
     const savedCustomColumns = localStorage.getItem('metrics_custom_columns');
     if (savedCustomColumns) {
       setCustomColumns(JSON.parse(savedCustomColumns));
-    }
-
-    const savedColumnOrder = localStorage.getItem('metrics_column_order');
-    if (savedColumnOrder) {
-      setColumnOrder(JSON.parse(savedColumnOrder));
     }
   }, []);
 
@@ -217,13 +211,6 @@ export const DataView: React.FC<DataViewProps> = ({
   
   const handleColumnHeaderClick = (params: GridColumnHeaderParams) => {
     setSelectedColumnField(params.field);
-  };
-
-  const handleColumnOrderChange = (params: any) => {
-    // Save column order when user reorders columns
-    const newOrder = params.columns.map((col: any) => col.field);
-    setColumnOrder(newOrder);
-    localStorage.setItem('metrics_column_order', JSON.stringify(newOrder));
   };
 
   const handlePaginationModelChange = (model: GridPaginationModel) => {
@@ -454,7 +441,6 @@ export const DataView: React.FC<DataViewProps> = ({
         }}
         onRowClick={handleRowClick}
         onColumnHeaderClick={handleColumnHeaderClick}
-        onColumnOrderChange={handleColumnOrderChange}
       />
     </>
   );

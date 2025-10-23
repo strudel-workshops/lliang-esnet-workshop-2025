@@ -7,9 +7,7 @@ interface DashboardProps {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ data }) => {
-  // Get programs and student levels
-  const programs = data.map(row => row['Details'] || 'Unknown');
-  const studentLevels = data.map(row => row['Metric '] || 'Unknown');
+  // Get yearly data
   const year2023 = data.map(row => parseFloat(row['2023']) || 0);
   const year2024 = data.map(row => parseFloat(row['2024']) || 0);
   const year2025 = data.map(row => parseFloat(row['2025']) || 0);
